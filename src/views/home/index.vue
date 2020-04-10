@@ -1,113 +1,86 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <h2>Essential Links</h2>
-    <ul>
-      <li>
-        <a
-          href="https://vuejs.org"
-          target="_blank"
-        >
-          Core Docs
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://forum.vuejs.org"
-          target="_blank"
-        >
-          Forum
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://chat.vuejs.org"
-          target="_blank"
-        >
-          Community Chat
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://twitter.com/vuejs"
-          target="_blank"
-        >
-          Twitter
-        </a>
-      </li>
-      <br>
-      <li>
-        <a
-          href="http://vuejs-templates.github.io/webpack/"
-          target="_blank"
-        >
-          Docs for This Template
-        </a>
-      </li>
-    </ul>
-    <h2>Ecosystem</h2>
-    <ul>
-      <li>
-        <a
-          href="http://router.vuejs.org/"
-          target="_blank"
-        >
-          vue-router
-        </a>
-      </li>
-      <li>
-        <a
-          href="http://vuex.vuejs.org/"
-          target="_blank"
-        >
-          vuex
-        </a>
-      </li>
-      <li>
-        <a
-          href="http://vue-loader.vuejs.org/"
-          target="_blank"
-        >
-          vue-loader
-        </a>
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/awesome-vue"
-          target="_blank"
-        >
-          awesome-vue
-        </a>
-      </li>
-    </ul>
+<div>
+    <p style="text-align: center; margin: 0 0 20px">使用 render-content 自定义数据项</p>
+  <div style="text-align: center">
+    <el-transfer
+      style="text-align: left; display: inline-block"
+      v-model="value"
+      filterable
+      :left-default-checked="[2, 3]"
+      :right-default-checked="[1]"
+      :render-content="renderFunc"
+      :titles="['Source', 'Target']"
+      :button-texts="['到左边', '到右边']"
+      :format="{
+        noChecked: '${total}',
+        hasChecked: '${checked}/${total}'
+      }"
+      @change="handleChange"
+      :data="data">
+      <el-button class="transfer-footer" slot="left-footer" size="small">操作</el-button>
+      <el-button class="transfer-footer" slot="right-footer" size="small">操作</el-button>
+    </el-transfer>
   </div>
+  <p style="text-align: center; margin: 50px 0 20px">使用 scoped-slot 自定义数据项</p>
+  <div style="text-align: center">
+    <el-transfer
+      style="text-align: left; display: inline-block"
+      v-model="value4"
+      filterable
+      :left-default-checked="[2, 3]"
+      :right-default-checked="[1]"
+      :titles="['Source', 'Target']"
+      :button-texts="['到左边', '到右边']"
+      :format="{
+        noChecked: '${total}',
+        hasChecked: '${checked}/${total}'
+      }"
+      @change="handleChange"
+      :data="data">
+      <span slot-scope="{ option }">{{ option.key }} - {{ option.label }}</span>
+      <el-button class="transfer-footer" slot="left-footer" size="small">操作</el-button>
+      <el-button class="transfer-footer" slot="right-footer" size="small">操作</el-button>
+    </el-transfer>
+  </div>
+</div>
+  
 </template>
 
-<script>
-export default {
-  name: 'HelloWorld',
-  data () {
-    return {
-      msg: 'Welcome to Your Vue.js App'
-    }
+<style>
+  .transfer-footer {
+    margin-left: 20px;
+    padding: 6px 5px;
   }
-}
-</script>
-
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 </style>
+
+<script>
+  export default {
+    data() {
+      const generateData = _ => {
+        const data = [];
+        for (let i = 1; i <= 15; i++) {
+          data.push({
+            key: i,
+            label: `备选项 ${ i }`,
+            disabled: i % 4 === 0
+          });
+        }
+        return data;
+      };
+      return {
+        data: generateData(),
+        value: [1],
+        value4: [1],
+        renderFunc(h, option) {
+          return <span>{ option.key } - { option.label }</span>;
+        }
+      };
+    },
+
+    methods: {
+      handleChange(value, direction, movedKeys) {
+        console.log(value, direction, movedKeys);
+      }
+    }
+  };
+</script>
